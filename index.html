@@ -1,0 +1,58 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>cundd</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="Resources/Stylesheets/main.css"/>
+</head>
+<body>
+
+<script type="text/irlib-template" id="app-template">
+        <div class="content">
+            <div class="row">
+                <div class="col col-6 term">
+                    <pre>{{{buffer}}}</pre>
+                    {%view view/textField%}
+                </div>
+            </div>
+        </div>
+</script>
+
+<section id="main">
+    <div class="row">
+        <div class="large-12 columns content">
+            <div id="app-root"></div>
+
+            <footer>
+                <p>&copy; <a href="http://www.cundd.net/">cundd</a> 2016</p>
+            </footer>
+        </div>
+    </div>
+
+</section>
+
+<script type="application/javascript" src="Resources/JavaScript/irlib.js"></script>
+<script type="application/javascript" src="Resources/JavaScript/main.js"></script>
+
+<!-- Piwik -->
+<script type="text/javascript">
+    var _paq = _paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+        var u=(("https:" == document.location.protocol) ? "https" : "http") + "://piwik.cundd.net/";
+        _paq.push(['setTrackerUrl', u+'piwik.php']);
+        _paq.push(['setSiteId', 1]);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
+        g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+</script>
+<noscript><p><img src="http://piwik.cundd.net/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<!-- End Piwik Code -->
+
+</body>
+</html>
