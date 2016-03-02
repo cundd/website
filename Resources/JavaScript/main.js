@@ -43,7 +43,7 @@ if (!String.prototype.startsWith) {
     });
 
     Cundd.Buffer = IrLib.CoreObject.extend({
-        _content: '',
+        _content: "<code>Type `help` for available commands</code>\n",
         /**
          * Initialize the controller
          *
@@ -165,7 +165,9 @@ if (!String.prototype.startsWith) {
                     return _this.runProgram(command, pipedOutput);
                 }, '');
 
-            this._echo(output);
+            if (typeof output !== 'undefined') {
+                this._echo(output);
+            }
             this.commandHistoryPosition = 0;
             view.assignVariable('inputLine', '');
         },
@@ -187,14 +189,7 @@ if (!String.prototype.startsWith) {
         },
 
         _echo: function (message) {
-            var _argumentCount = arguments.length,
-                fullOutput = '',
-                i;
-            for (i = 0; i < _argumentCount; i++) {
-                message = arguments[i];
-                IrLib.Logger.debug(message);
-                fullOutput += message + " ";
-            }
+            var fullOutput = Array.prototype.join.call(arguments, ' ');
             this.contentBuffer.addLine(
                 '<code>' + fullOutput + '</code>'
             );
@@ -231,8 +226,24 @@ if (!String.prototype.startsWith) {
             }
         }),
 
+        clearCommand: function() {
+            this.contentBuffer.clear();
+        },
+
         echoCommand: function (message) {
             return Array.prototype.map.call(arguments, this._trimQuotes).join(' ');
+        },
+
+        helpCommand: function (directory) {
+            return [
+                "Available commands: ",
+                "help: show this message",
+                "ls: list files and directories",
+                "ll: list files and directories (as list)",
+                "cat fileName: display the file content",
+                "cd directory: step into a directory",
+                "pwd: print the current directory path"
+            ].join("\n")
         },
 
         cdCommand: function (directory) {
@@ -255,10 +266,10 @@ if (!String.prototype.startsWith) {
 
             if (typeof fileStat === 'undefined') {
                 return 'cat: no such file or directory: ' + file;
-            } else if (fileStat.content !== null) {
+            } else if (fileStat.content !== null && typeof fileStat.content !== 'undefined') {
                 return fileStat.content;
             } else if (fileStat.url) {
-                return 'cat: ' + file + ': Is a directory';
+                return 'cat: ' + file + ': Is a directory (use `cd ' + file + '`)';
             }
         },
 
@@ -298,7 +309,7 @@ if (!String.prototype.startsWith) {
         },
 
         llCommand: function (filter) {
-            this.lsCommand(filter, true);
+            return this.lsCommand(filter, true);
         },
 
         _filterFiles: function (filter) {
