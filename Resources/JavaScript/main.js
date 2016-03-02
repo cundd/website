@@ -23,6 +23,25 @@ if (!String.prototype.startsWith) {
         prompt: '> '
     };
 
+    Cundd.File = IrLib.CoreObject.extend({
+        "stats": "-rw-r--r--  3 cundd staff  102B Feb 27 13:06",
+        "content": "",
+        "url": "",
+
+        init: function (input) {
+            input = input || {};
+            if (input.stats) {
+                this.stats = input.stats;
+            }
+            if (input.content) {
+                this.content = input.content;
+            }
+            if (input.url) {
+                this.url = input.url;
+            }
+        }
+    });
+
     Cundd.Buffer = IrLib.CoreObject.extend({
         _content: '',
         /**
@@ -224,6 +243,15 @@ if (!String.prototype.startsWith) {
             this.echo('/');
         },
 
+        touchCommand: function (name) {
+            if (!name) {
+                this.echo("usage: \ntouch file");
+                return;
+            }
+
+            this.files['' + name] = new Cundd.File();
+        },
+
         lsCommand: function (filter, list) {
             var _this = this,
                 _files = this._filterFiles(filter),
@@ -315,8 +343,7 @@ if (!String.prototype.startsWith) {
         _getCommands: function () {
             var commands = [];
             for (var propertyName in this) {
-                if (this.hasOwnProperty(propertyName)
-                    && propertyName.endsWith('Command')
+                if (propertyName.endsWith('Command')
                     && typeof this[propertyName] === 'function') {
                     commands.push(propertyName.slice(0, -7));
                 }
