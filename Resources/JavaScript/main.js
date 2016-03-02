@@ -280,7 +280,6 @@ if (!String.prototype.startsWith) {
         touchCommand: function (name) {
             if (!name) {
                 return "usage: \ntouch file";
-                return;
             }
 
             this.files['' + name] = new Cundd.File({
