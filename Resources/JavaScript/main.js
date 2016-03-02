@@ -105,13 +105,179 @@ if (!String.prototype.startsWith) {
             view.reloadAndSetCursor();
         },
 
-        handleHotKey: function (keyCode, event) {
+        handleHotKey: function (keyCode) {
             switch (keyCode) {
                 case 75: // Meta+K Ctrl+K
                     this.contentBuffer.clear();
                     this.view.reloadAndSetCursor();
                     break;
             }
+        },
+
+        handleTab: function () {
+            var _view = this.view,
+                value = _view.inputValue().trim();
+            if (value) {
+                _view
+                    .assignVariable('inputLine', this._autoComplete(value))
+                    .reloadAndSetCursor();
+            }
+        },
+
+        handleCommandLine: function (commandLine, view) {
+            var commandParts, command, commandImpl;
+
+            commandLine = commandLine.trim();
+            if (!commandLine) {
+                this.echo(Cundd.config.prompt);
+                return;
+            }
+            commandParts = commandLine.split(' ');
+            command = commandParts[0];
+            commandImpl = this[command + 'Command'];
+
+            this.echo(Cundd.config.prompt + commandLine);
+            this.commandHistory.push(commandLine);
+            if (typeof commandImpl === 'function') {
+                commandParts.shift();
+                commandImpl.apply(this, commandParts);
+            } else {
+                this.echo('cunddsh: command not found: ' + command);
+            }
+            view.assignVariable('inputLine', '');
+        },
+
+        echo: function (message) {
+            var _argumentCount = arguments.length,
+                fullOutput = '',
+                i;
+            for (i = 0; i < _argumentCount; i++) {
+                message = arguments[i];
+                IrLib.Logger.debug(message);
+                fullOutput += message + " ";
+            }
+            this.contentBuffer.addLine(
+                '<code>' + fullOutput + '</code>'
+            );
+        },
+
+        files: new IrLib.Dictionary({
+            "README": {
+                "stats": "-rw-r--r--  3 cundd staff  102B Feb 27 13:06",
+                "content": "My name is Daniel. I'm a web developer living in Vorarlberg in Austria."
+            },
+            "REST-for-TYPO3-rest.cundd.net": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "url": "http://rest.cundd.net"
+            },
+            "Composer-for-TYPO3": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "url": "https://github.com/cundd/CunddComposer"
+            },
+            "Assetic-for-TYPO3": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "url": "https://github.com/cundd/CunddAssetic"
+            },
+            "noshi.cundd.net": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "url": "http://noshi.cundd.net"
+            },
+            "stairtower.cundd.net": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "url": "http://stairtower.cundd.net"
+            },
+            "github.com": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "url": "https://github.com/cundd"
+            }
+        }),
+
+        echoCommand: function (message) {
+            this.echo.apply(this, Array.prototype.map.call(arguments, this._trimQuotes));
+        },
+
+        cdCommand: function (directory) {
+            var fileStat = this.files[directory];
+
+            if (fileStat && fileStat.url) {
+                window.location.href = '' + fileStat.url;
+            } else if (fileStat) {
+                this.echo('cd: not a directory: ' + directory);
+            } else {
+                this.echo('cd: no such file or directory: ' + directory);
+            }
+        },
+
+        catCommand: function (file) {
+            var fileStat = this.files[file];
+
+            if (fileStat && fileStat.content) {
+                this.echo(fileStat.content)
+            } else if (fileStat) {
+                this.echo('cat: not a directory: ' + file);
+            } else {
+                this.echo('cat: no such file or directory: ' + file);
+            }
+        },
+
+        pwdCommand: function () {
+            this.echo('/');
+        },
+
+        lsCommand: function (filter, list) {
+            var _this = this,
+                _files = this._filterFiles(filter),
+                separator = list ? "\n" : ' ',
+                content = [];
+
+            if (filter && _files.keys().length === 0) {
+                this.echo('ls: ' + filter + ': No such file or directory')
+            }
+
+            if (list) {
+                content.push("total " + _files.keys().length);
+            }
+            _files.forEach(function (data, key) {
+                content.push(_this._fileRow(data, key, list));
+            });
+
+            this.echo(content.join(separator));
+        },
+
+        llCommand: function (filter) {
+            this.lsCommand(filter, true);
+        },
+
+        _filterFiles: function (filter) {
+            var _files = this.files,
+                filteredFiles = new IrLib.Dictionary();
+            if (!filter) {
+                return _files;
+            }
+
+            _files.forEach(function (data, fileName) {
+                //console.log(fileName, fileName === filter)
+                if (fileName === filter) {
+                    filteredFiles[fileName] = data;
+                }
+            });
+
+            return filteredFiles;
+        },
+
+        _linkWrap: function (data, key) {
+            if (data.url) {
+                return '<a href="' + data.url + '" target="_blank">' + key + '</a>';
+            }
+            return key;
+        },
+
+        _fileRow: function (data, key, listStyle) {
+            if (!listStyle) {
+                return this._linkWrap(data, key);
+            }
+
+            return data.stats + ' ' + this._linkWrap(data, key);
         },
 
         _autoComplete: function (value) {
@@ -146,20 +312,11 @@ if (!String.prototype.startsWith) {
             return firstMatch.trim() + ' ';
         },
 
-        handleTab: function () {
-            var _view = this.view,
-                value = _view.inputValue().trim();
-            if (value) {
-                _view
-                    .assignVariable('inputLine', this._autoComplete(value))
-                    .reloadAndSetCursor();
-            }
-        },
-
         _getCommands: function () {
             var commands = [];
             for (var propertyName in this) {
-                if (propertyName.endsWith('Command')
+                if (this.hasOwnProperty(propertyName)
+                    && propertyName.endsWith('Command')
                     && typeof this[propertyName] === 'function') {
                     commands.push(propertyName.slice(0, -7));
                 }
@@ -167,167 +324,9 @@ if (!String.prototype.startsWith) {
             return commands;
         },
 
-        handleCommandLine: function (commandLine, view) {
-            var commandParts, command, commandImpl;
-
-            commandLine = commandLine.trim();
-            if (!commandLine) {
-                this.echo(Cundd.config.prompt);
-                return;
-            }
-            commandParts = commandLine.split(' ');
-            command = commandParts[0];
-            commandImpl = this[command + 'Command'];
-
-            this.echo(Cundd.config.prompt + commandLine);
-            this.commandHistory.push(commandLine);
-            if (typeof commandImpl === 'function') {
-                commandParts.shift();
-                commandImpl.apply(this, commandParts);
-            } else {
-                this.echo('cunddsh: command not found: ' + command);
-            }
-            view.assignVariable('inputLine', '');
-        },
-
         _trimQuotes: function (message) {
             return message.replace(/^"|"$|^'|'$/gm, '');
-        },
-
-        echo: function (message) {
-            var _argumentCount = arguments.length,
-                fullOutput = '',
-                i;
-            for (i = 0; i < _argumentCount; i++) {
-                message = arguments[i];
-                IrLib.Logger.debug(message);
-                fullOutput += message + " ";
-            }
-            this.contentBuffer.addLine(
-                '<code>' + fullOutput + '</code>'
-            );
-        },
-
-        echoCommand: function (message) {
-            this.echo.apply(this, Array.prototype.map.call(arguments, this._trimQuotes));
-        },
-
-        files: new IrLib.Dictionary({
-            "README": {
-                "stats": "-rw-r--r--  3 cundd staff  102B Feb 27 13:06",
-                "content": "My name is Daniel. I'm a web developer living in Vorarlberg in Austria."
-            },
-            "REST-for-TYPO3-rest.cundd.net": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
-                "url": "http://rest.cundd.net"
-            },
-            "Composer-for-TYPO3": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
-                "url": "https://github.com/cundd/CunddComposer"
-            },
-            "Assetic-for-TYPO3": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
-                "url": "https://github.com/cundd/CunddAssetic"
-            },
-            "noshi.cundd.net": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
-                "url": "http://noshi.cundd.net"
-            },
-            "stairtower.cundd.net": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
-                "url": "http://stairtower.cundd.net"
-            },
-            "github.com": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
-                "url": "https://github.com/cundd"
-            }
-        }),
-
-        cdCommand: function (directory) {
-            var fileStat = this.files[directory];
-
-            if (fileStat && fileStat.url) {
-                window.location.href = '' + fileStat.url;
-            } else if (fileStat) {
-                this.echo('cd: not a directory: ' + directory);
-            } else {
-                this.echo('cd: no such file or directory: ' + directory);
-            }
-        },
-
-        catCommand: function (file) {
-            var fileStat = this.files[file];
-
-            if (fileStat && fileStat.content) {
-                this.echo(fileStat.content)
-            } else if (fileStat) {
-                this.echo('cat: not a directory: ' + file);
-            } else {
-                this.echo('cat: no such file or directory: ' + file);
-            }
-        },
-
-        pwdCommand: function () {
-            this.echo('/');
-        },
-
-        _filterFiles: function (filter) {
-            var _files = this.files,
-                filteredFiles = new IrLib.Dictionary();
-            if (!filter) {
-                return _files;
-            }
-
-            _files.forEach(function (data, fileName) {
-                //console.log(fileName, fileName === filter)
-                if (fileName === filter) {
-                    filteredFiles[fileName] = data;
-                }
-            });
-
-            return filteredFiles;
-        },
-
-        lsCommand: function (filter, list) {
-            var _this = this,
-                _files = this._filterFiles(filter),
-                separator = list ? "\n" : ' ',
-                content = [];
-
-            if (filter && _files.keys().length === 0) {
-                this.echo('ls: ' + filter + ': No such file or directory')
-            }
-
-            if (list) {
-                content.push("total " + _files.keys().length);
-            }
-            _files.forEach(function (data, key) {
-                content.push(_this._fileRow(data, key, list));
-            });
-
-            this.echo(content.join(separator));
-        },
-
-        _linkWrap: function (data, key) {
-            if (data.url) {
-                return '<a href="' + data.url + '" target="_blank">' + key + '</a>';
-            }
-            return key;
-        },
-
-        _fileRow: function (data, key, listStyle) {
-            if (!listStyle) {
-                return this._linkWrap(data, key);
-            }
-
-            return data.stats + ' ' + this._linkWrap(data, key);
-        },
-
-        llCommand: function (filter) {
-            this.lsCommand(filter, true);
         }
-
-
     });
 
     Cundd.AppController = IrLib.Controller.extend({
@@ -390,34 +389,17 @@ if (!String.prototype.startsWith) {
             _view.reloadAndSetCursor();
         },
 
-        handleCommandLine: function (command, event) {
+        handleCommandLine: function (command) {
             var _view = this.view;
             this.commandHandler.handleCommandLine(command, _view);
             _view.reloadAndSetCursor();
         },
 
         handleHotKey: function (keyCode, event) {
-            var _view = this.view;
             this.commandHandler.handleHotKey(keyCode, event);
         },
 
         events: {
-
-//                click: function (e) {
-////                    IrLib.Logger.log('Clicked element', e.target);
-////                    IrLib.Logger.log('attached to view', e.irTarget);
-//
-//                    if (e.target.id === 'save') {
-//                        this.view.assignVariable('saved', this.view.variables.saved + 1);
-//                        this.view.reload();
-//                    }
-//
-//                    if (e.target.id === 'delete') {
-//                        this.view.assignVariable('saved', 0);
-//                        this.view.reload();
-//                    }
-//                },
-
             'keydown': function (event) {
                 var _keyCode = event.keyCode;
                 //console.log(_keyCode, event);
@@ -444,7 +426,7 @@ if (!String.prototype.startsWith) {
             return this._dom ? this._dom.querySelector('input') : undefined;
         },
 
-        inputValue: function() {
+        inputValue: function () {
             var _input = this.input();
             return _input ? _input.value : '';
         },
