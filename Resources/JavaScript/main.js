@@ -24,19 +24,19 @@ if (!String.prototype.startsWith) {
     };
 
     Cundd.File = IrLib.CoreObject.extend({
-        "stats": "-rw-r--r--  3 cundd staff  102B Feb 27 13:06",
-        "content": "",
+        "stats": "-rw-r--r--  3 cundd staff  102B Mar 03 21:44",
+        "content": null,
         "url": "",
 
         init: function (input) {
             input = input || {};
-            if (input.stats) {
+            if (typeof input.stats !== 'undefined') {
                 this.stats = input.stats;
             }
-            if (input.content) {
+            if (typeof input.content !== 'undefined') {
                 this.content = input.content;
             }
-            if (input.url) {
+            if (typeof input.url !== 'undefined') {
                 this.url = input.url;
             }
         }
@@ -229,11 +229,11 @@ if (!String.prototype.startsWith) {
 
         catCommand: function (file) {
             var fileStat = this.files[file];
-
-            if (fileStat && fileStat.content) {
-                this.echo(fileStat.content)
-            } else if (fileStat) {
-                this.echo('cat: not a directory: ' + file);
+console.log(fileStat.content)
+            if (fileStat && fileStat.content !== null) {
+                this.echo(fileStat.content);
+            } else if (fileStat && fileStat.url) {
+                this.echo('cat: ' + file + ': Is a directory');
             } else {
                 this.echo('cat: no such file or directory: ' + file);
             }
@@ -249,7 +249,9 @@ if (!String.prototype.startsWith) {
                 return;
             }
 
-            this.files['' + name] = new Cundd.File();
+            this.files['' + name] = new Cundd.File({
+                content: ""
+            });
         },
 
         lsCommand: function (filter, list) {
