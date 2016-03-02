@@ -143,30 +143,50 @@ if (!String.prototype.startsWith) {
             }
         },
 
-        handleCommandLine: function (commandLine, view) {
-            var commandParts, command, commandImpl;
-
-            commandLine = commandLine.trim();
-            if (!commandLine) {
-                this.echo(Cundd.config.prompt);
+        handleCommandLine: function (input, view) {
+            var _this = this,
+                output;
+            input = input.trim();
+            if (!input) {
+                this._echo(Cundd.config.prompt);
                 return;
             }
-            commandParts = commandLine.split(' ');
-            command = commandParts[0];
-            commandImpl = this[command + 'Command'];
 
-            this.echo(Cundd.config.prompt + commandLine);
-            this.commandHistory.push(commandLine);
-            if (typeof commandImpl === 'function') {
-                commandParts.shift();
-                commandImpl.apply(this, commandParts);
-            } else {
-                this.echo('cunddsh: command not found: ' + command);
-            }
+            this._echo(Cundd.config.prompt + input);
+            this.commandHistory.push(input);
+
+            output = input
+                .split('|')
+                .map(function (command) {
+                    return command.trim();
+                })
+                .reduce(function (pipedOutput, command) {
+                    IrLib.Logger.log(pipedOutput)
+                    return _this.runProgram(command, pipedOutput);
+                }, '');
+
+            this._echo(output);
+            this.commandHistoryPosition = 0;
             view.assignVariable('inputLine', '');
         },
 
-        echo: function (message) {
+        runProgram: function (commandLine, argument) {
+            var commandParts = commandLine.split(' '),
+                command = commandParts[0],
+                commandImpl = this[command + 'Command'];
+
+            if (typeof commandImpl === 'function') {
+                commandParts.shift();
+                if (argument) {
+                    commandParts.push(argument);
+                }
+                return commandImpl.apply(this, commandParts);
+            }
+
+            return 'cunddsh: command not found: ' + command;
+        },
+
+        _echo: function (message) {
             var _argumentCount = arguments.length,
                 fullOutput = '',
                 i;
@@ -212,7 +232,7 @@ if (!String.prototype.startsWith) {
         }),
 
         echoCommand: function (message) {
-            this.echo.apply(this, Array.prototype.map.call(arguments, this._trimQuotes));
+            return Array.prototype.map.call(arguments, this._trimQuotes).join(' ');
         },
 
         cdCommand: function (directory) {
@@ -221,31 +241,34 @@ if (!String.prototype.startsWith) {
             if (fileStat && fileStat.url) {
                 window.location.href = '' + fileStat.url;
             } else if (fileStat) {
-                this.echo('cd: not a directory: ' + directory);
+                return 'cd: not a directory: ' + directory;
             } else {
-                this.echo('cd: no such file or directory: ' + directory);
+                return 'cd: no such file or directory: ' + directory;
             }
         },
 
         catCommand: function (file) {
+            if (!file) {
+                return "usage: \ncat file";
+            }
             var fileStat = this.files[file];
-console.log(fileStat.content)
-            if (fileStat && fileStat.content !== null) {
-                this.echo(fileStat.content);
-            } else if (fileStat && fileStat.url) {
-                this.echo('cat: ' + file + ': Is a directory');
-            } else {
-                this.echo('cat: no such file or directory: ' + file);
+
+            if (typeof fileStat === 'undefined') {
+                return 'cat: no such file or directory: ' + file;
+            } else if (fileStat.content !== null) {
+                return fileStat.content;
+            } else if (fileStat.url) {
+                return 'cat: ' + file + ': Is a directory';
             }
         },
 
         pwdCommand: function () {
-            this.echo('/');
+            return '/';
         },
 
         touchCommand: function (name) {
             if (!name) {
-                this.echo("usage: \ntouch file");
+                return "usage: \ntouch file";
                 return;
             }
 
@@ -261,7 +284,7 @@ console.log(fileStat.content)
                 content = [];
 
             if (filter && _files.keys().length === 0) {
-                this.echo('ls: ' + filter + ': No such file or directory')
+                return 'ls: ' + filter + ': No such file or directory';
             }
 
             if (list) {
@@ -271,7 +294,7 @@ console.log(fileStat.content)
                 content.push(_this._fileRow(data, key, list));
             });
 
-            this.echo(content.join(separator));
+            return content.join(separator);
         },
 
         llCommand: function (filter) {
