@@ -452,7 +452,7 @@ if (!String.prototype.startsWith) {
         appView: Cundd.AppView,
 
         'view/textField': IrLib.View.Template.extend({
-            template: Cundd.config.prompt + '<input type="text" autofocus value="{{inputLine}}">'
+            template: Cundd.config.prompt + '<input type="text" autofocus autocapitalize="off" autocorrect="off" value="{{inputLine}}">'
         }),
         appController: Cundd.AppController
     });
