@@ -232,6 +232,10 @@ if (!String.prototype.startsWith) {
             "github.com": {
                 "stats": "drwxr-xr-x  3 cundd staff  102B Apr 21  2011",
                 "url": "https://github.com/cundd"
+            },
+            "twitter": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Sep 01  2010",
+                "url": "https://twitter.com/cundd"
             }
         }),
 
