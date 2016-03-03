@@ -190,6 +190,7 @@ if (!String.prototype.startsWith) {
 
         _echo: function (message) {
             var fullOutput = Array.prototype.join.call(arguments, ' ');
+            fullOutput = fullOutput.replace(/\s{2}/g, '&nbsp; ');
             this.contentBuffer.addLine(
                 '<code>' + fullOutput + '</code>'
             );
@@ -201,27 +202,35 @@ if (!String.prototype.startsWith) {
                 "content": "My name is Daniel. I'm a web developer living in Vorarlberg in Austria."
             },
             "REST-for-TYPO3-rest.cundd.net": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "stats": "drwxr-xr-x  3 cundd staff  102B May 16  2013",
                 "url": "http://rest.cundd.net"
             },
             "Composer-for-TYPO3": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "stats": "drwxr-xr-x  3 cundd staff  102B Dec 22  2012",
                 "url": "https://github.com/cundd/CunddComposer"
             },
             "Assetic-for-TYPO3": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "stats": "drwxr-xr-x  3 cundd staff  102B Dec 31  2012",
                 "url": "https://github.com/cundd/CunddAssetic"
             },
             "noshi.cundd.net": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "stats": "drwxr-xr-x  3 cundd staff  102B Jul 11  2014",
                 "url": "http://noshi.cundd.net"
             },
             "stairtower.cundd.net": {
                 "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
                 "url": "http://stairtower.cundd.net"
             },
+            "dive.cundd.net": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Dec 30  2011",
+                "url": "http://dive.cundd.net"
+            },
+            "old-portfolio.cundd.net": {
+                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 26  2014",
+                "url": "http://portfolio.cundd.net/"
+            },
             "github.com": {
-                "stats": "drwxr-xr-x  3 cundd staff  102B Feb 27 13:06",
+                "stats": "drwxr-xr-x  3 cundd staff  102B Apr 21  2011",
                 "url": "https://github.com/cundd"
             }
         }),
