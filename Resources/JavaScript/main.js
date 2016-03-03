@@ -365,8 +365,10 @@ if (!String.prototype.startsWith) {
 
             prefix = commandLineParts[commandLinePartsLength - 1];
             if (prefix.trim()) {
+                prefix = prefix.trim().toLowerCase();
                 matches = options.filter(function (item) {
-                    return item.startsWith(prefix);
+                    return item.toLowerCase().startsWith(prefix);
+                    // Case sensitive return item.startsWith(prefix);
                 });
             } else {
                 matches = options;
