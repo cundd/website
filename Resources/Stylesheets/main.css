@@ -72,3 +72,17 @@ footer {
   footer p {
     line-height: 42px;
     margin: 0; }
+
+p {
+  margin: 0 0 20px; }
+
+h1 {
+  font-size: 1.3rem;
+  margin: 20px 0; }
+
+h2 {
+  font-size: 1.1rem;
+  margin: 20px 0 10px; }
+
+.text {
+  padding: 20px; }
