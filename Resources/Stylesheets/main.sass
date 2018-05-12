@@ -7,6 +7,8 @@ $font-family: 'Inconsolata', monospace
 
 $standard-padding: 20px
 $footer-height: 42px
+$footer-height-small: 34px
+$footer-height-space: 4px
 
 *, *:before, *:after
   -moz-box-sizing: border-box
@@ -17,7 +19,7 @@ html, body
   height: 100%
   font-size: 120%
 
-body 
+body
   background: $color-dark
   color: #222
   padding: 0
@@ -46,7 +48,6 @@ code
   margin: 0
   width: 100%
 
-
 input,
 select,
 textarea
@@ -62,36 +63,6 @@ pre
   code
     white-space: pre-line
 
-.term
-  width: 600px
-  max-width: 100%
-  padding: 0 $standard-padding
-  margin: auto
-  height: calc(100vh - #{$footer-height})
-  overflow-x: hidden
-
-
-a
-  color: $color
-  text-decoration: underline
-
-  &:hover
-    color: $color-light
-
-
-
-footer
-  height: $footer-height
-  //position: fixed
-  bottom: 0
-  background: rgba(black, 0.5)
-  padding: 0 $standard-padding
-  width: 100%
-
-  p
-    line-height: $footer-height
-    margin: 0
-
 p
   margin: 0 0 $standard-padding
 
@@ -103,6 +74,44 @@ h2
   font-size: 1.1rem
   margin: $standard-padding 0 ($standard-padding / 2)
 
+.term
+  width: 600px
+  max-width: 100%
+  padding: 0 $standard-padding
+  margin: auto
+  height: calc(100vh - #{$footer-height + $footer-height-space + $footer-height-small})
+  overflow-x: hidden
+
+a
+  color: $color
+  text-decoration: underline
+
+  &:hover
+    color: $color-light
+
+footer
+  bottom: 0
+  width: 100%
+  .block
+    min-height: $footer-height
+    //position: fixed
+    background: rgba(black, 0.5)
+    padding: 0 $standard-padding
+    display: flex
+    align-items: center
+
+    p
+      margin: 0
+      //line-height: $footer-height
+
+    &.small
+      font-size: 0.8em
+      min-height: $footer-height-small
+      //p
+        line-height: $footer-height-small
+
+    + .block
+      margin-top: $footer-height-space
 
 .text
   padding: $standard-padding

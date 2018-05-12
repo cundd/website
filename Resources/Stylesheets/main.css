@@ -49,30 +49,6 @@ pre {
   pre code {
     white-space: pre-line; }
 
-.term {
-  width: 600px;
-  max-width: 100%;
-  padding: 0 20px;
-  margin: auto;
-  height: calc(100vh - 42px);
-  overflow-x: hidden; }
-
-a {
-  color: #f45;
-  text-decoration: underline; }
-  a:hover {
-    color: #ff919b; }
-
-footer {
-  height: 42px;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 0 20px;
-  width: 100%; }
-  footer p {
-    line-height: 42px;
-    margin: 0; }
-
 p {
   margin: 0 0 20px; }
 
@@ -83,6 +59,37 @@ h1 {
 h2 {
   font-size: 1.1rem;
   margin: 20px 0 10px; }
+
+.term {
+  width: 600px;
+  max-width: 100%;
+  padding: 0 20px;
+  margin: auto;
+  height: calc(100vh - 80px);
+  overflow-x: hidden; }
+
+a {
+  color: #f45;
+  text-decoration: underline; }
+  a:hover {
+    color: #ff919b; }
+
+footer {
+  bottom: 0;
+  width: 100%; }
+  footer .block {
+    min-height: 42px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0 20px;
+    display: flex;
+    align-items: center; }
+    footer .block p {
+      margin: 0; }
+    footer .block.small {
+      font-size: 0.8em;
+      min-height: 34px; }
+    footer .block + .block {
+      margin-top: 4px; }
 
 .text {
   padding: 20px; }
