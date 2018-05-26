@@ -14,6 +14,7 @@
                     This data is only processed by us and our web hosting platform. Please read our
                     Privacy Policy to learn more.</p>
                 <h2 id="1-----purpose-of-the-processing">1 – Purpose of the processing</h2>
+                <h3 id="1-1---matomo--formerly-known-as-piwik-">1.1 - Matomo (formerly known as Piwik)</h3>
                 <p>Matomo is used to analyse the behaviour of the website visitors to identify potential
                     pitfalls; not found pages, search engine indexing issues, which contents are the most
                     appreciated… Once the data is processed (number of visitors reaching a not found pages,
@@ -42,6 +43,12 @@
                     <li>User Agent of the browser</li>
                 </ul>
                 <p>The processing of personal data with Matomo is based on legitimate interests.</p>
+                <h3 id="1-2---webfonts--fonts-com-">1.2 - Webfonts (fonts.com)</h3>
+                <p>Some of the fonts used on our websites are provided by fonts.com. As your browser
+                    displays those fonts, it will download the font-files from fonts.com servers. </p>
+                <p>Please see <a href="https://www.monotype.com/legal/privacy-policy">Monotype Privacy Policy
+                        Statement</a>
+                    for more information on how your data is handled by fonts.com.</p>
                 <h2 id="2-----the-legitimate-interests">2 – The legitimate interests</h2>
                 <p>Processing your personal data such as cookies is helping us identify what is working
                     and what is not on our website. For example, it helps us identify if the way we are
@@ -58,12 +65,11 @@
                     country and safeguards</h2>
                 <p>Matomo data is hosted in Germany.</p>
                 <h2 id="5-----retention-period-or-criteria-used-to-determine-the-retention-period">5 – Retention period
-                    or
-                    criteria used to determine the retention period</h2>
+                    or criteria used to determine the retention period</h2>
                 <p>We are keeping the personal data captured within Matomo for a period of 150 days.</p>
                 <h2 id="6-----the-existence-of-each-of-the-data-subject---s-rights">6 – The existence of each of the
-                    data
-                    subject’s rights</h2>
+                    data subject’s rights</h2>
+                <h3 id="6-1---matomo">6.1 - Matomo</h3>
                 <p>As Matomo is processing personal data on legitimate interests, you can exercise the
                     following rights:</p>
                 <ul>
@@ -75,9 +81,8 @@
                         following opt-out feature:
                     </li>
                 </ul>
-
                 <iframe style="border: 0; height: 200px; width: 600px;"
-                        src="https://piwik.cundd.net/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=de&amp;backgroundColor=&amp;fontColor=f45&amp;fontSize=14px&amp;fontFamily=%22Inconsolata%22%2C%20monospace"></iframe>
+                        src="https://piwik.cundd.net/index.php?module=CoreAdminHome&amp;action=optOut&amp;language=en&amp;backgroundColor=&amp;fontColor=f45&amp;fontSize=14px&amp;fontFamily=%22Inconsolata%22%2C%20monospace"></iframe>
                 <p>If you wish us to not process any personal data with Matomo, you can opt-out from it at
                     any time. There will be no consequences at all regarding the use of our website.</p>
                 <p>Matomo is not doing any profiling.</p>
